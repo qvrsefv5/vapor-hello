@@ -3,10 +3,10 @@ import Vapor
 
 struct UserController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
-        let auth = routes.grouped("auth")
-        let passwordProtected = auth.grouped(User.authenticator())
-        auth.post("register", use: create)
-        passwordProtected.post("login", use: login) 
+        let user = routes.grouped("user")
+        let secure = user.grouped(Payload.authenticator(), Payload.guardMiddleware())
+        secure.post("register", use: create)
+        secure.post("delete", use: delete)
     }
     
     @Sendable
@@ -25,23 +25,13 @@ struct UserController: RouteCollection {
     }
 
     @Sendable
-    func login(req: Request) async throws -> HTTPStatus {
-//        try LoginRequest.validate(content: req)
-        let user = try req.auth.require(User.self)
-        print("\(user)")
-        let loginRequest = try req.content.decode(LoginRequest.self)
-//        let user = try req.auth.require(User.self)
-//        return [user: user.toDTO(), accessToken: "token"]
-        return .ok
-    }
-
-    @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
         guard let todo = try await Todo.find(req.parameters.get("todoID"), on: req.db) else {
             throw Abort(.notFound)
         }
-
-        try await todo.delete(on: req.db)
+        
+            try await todo.delete(on: req.db)
+        
         return .noContent
     }
 }

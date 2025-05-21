@@ -16,9 +16,6 @@ final class User: Model, @unchecked Sendable {
 
     @Field(key: "password_hash")
     var passwordHash: String
-    
-    @Field(key: "token")
-    var token: [String?]?
 
     @Timestamp(key: "created_at", on: .create, format: .iso8601)
     var createdAt: Date?
@@ -29,12 +26,11 @@ final class User: Model, @unchecked Sendable {
 
     init() { }
 
-    init(id: UUID? = nil, name: String? = nil, email: String, passwordHash: String, token: [String]? = []) {
+    init(id: UUID? = nil, name: String? = nil, email: String, passwordHash: String) {
         self.id = id
         self.name = name
         self.email = email
         self.passwordHash = passwordHash
-        self.token = token
     }
 
     func toDTO() -> UserDTO {

@@ -12,5 +12,6 @@ func routes(_ app: Application) throws {
     app.group("api") { api in
         try! api.register(collection: TodoController())
         try! api.register(collection: UserController())
+        try! api.register(collection: AuthController())
     }
 }
